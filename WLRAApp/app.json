@@ -2,6 +2,11 @@
   "expo": {
     "name": "WLRAApp",
     "slug": "WLRAApp",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "885988f3-b21a-4dd7-aa8c-210b9473f385"
+      }
+    }
   }
 }
