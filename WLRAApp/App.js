@@ -12,8 +12,6 @@ export default function PlayerUI() {
     <View style={styles.container}>
       <StatusBar style="auto" />
       
-      {/* /<Text style={styles.title}>Audio Player</Text>  */}
-
       {/* Play/Pause Button logic-> toggles through play and pause */}
       <TouchableOpacity // Touchable UI component that responds to presses
         style={styles.playPauseButton}
