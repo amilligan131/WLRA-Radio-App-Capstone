@@ -1,28 +1,41 @@
+import Slider from '@react-native-community/slider';
 import { StatusBar } from 'expo-status-bar';
-import React,  { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 
-
-
+//+++++Test functionality with sample audio +++++
 export default function PlayerUI() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] =useState(0.5); //+++++Functionality++++++
+  const [isPlaying, setIsPlaying] = useState(false); // Button logic
+  const [volume, setVolume] = useState(0.5); // Volume logic
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-        <Text style ={styles.title}>
-        </Text>
-        
-        {/* Play/Pause Button */}
-        <TouchableOpacity
-          style={styles.playPauseButton}
-          onPress={() => setIsPlaying(!isPlaying)}>
-          <Text style={styles.buttonText}>{isPlaying ? 'Pause' : 'Play'}</Text>
-        </TouchableOpacity>
+      
+      {/* /<Text style={styles.title}>Audio Player</Text>  */}
 
-    </View>
+      {/* Play/Pause Button logic-> toggles through play and pause */}
+      <TouchableOpacity // Touchable UI component that responds to presses
+        style={styles.playPauseButton}
+        onPress={() => setIsPlaying(!isPlaying)}>
+        <Text style={styles.buttonText}>{isPlaying ? 'Pause' : 'Play'}</Text>
+      </TouchableOpacity>
   
+      {/* Volume Control */}
+      <View style={styles.volumeControl}>
+      <Text style={styles.volumeText}>Volume: {Math.round(volume * 100)}%</Text>
+      <Slider
+        style={styles.volumeSlider}
+        minimumValue={0}
+        maximumValue={1}
+        value={volume}
+        onValueChange={(value) => setVolume(value)} // Update volume as the slider moves
+        minimumTrackTintColor="#1EB1FC"
+        maximumTrackTintColor="#000000"
+        thumbTintColor="#1EB1FC"
+      />
+      </View>
+    </View>
   );
 }
 
@@ -40,7 +53,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 50, // Circular shape
     width: 100,
-    height: 100,
+    height: 70,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -49,13 +62,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   // ++++++++++Volume Button Add functionality++++++++
+  volumeControl: {
+    alignItems: 'center',
+  },
   volumeText: {
-    marginTop: 20,
     fontSize: 18,
+    marginBottom: 10,
   },
   volumeSlider: {
     width: 200,
     height: 40,
-    marginTop: 20,
   },
 });
