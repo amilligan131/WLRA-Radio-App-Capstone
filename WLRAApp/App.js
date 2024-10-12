@@ -9,7 +9,7 @@ export default function PlayerUI() {
   const [showVolume, setShowVolume] = useState(false); // Volume slider toggle
   const [volume, setVolume] = useState(0.5); // Volume logic
   const [currentTime, setCurrentTime] = useState(4); // Track current time (example)
-  const [totalDuration, setTotalDuration] = useState(300); // Total duration (example: 5 minutes)
+  const [totalDuration, setTotalDuration] = useState(300); // Total duration (example like: 5 minutes)
 
   return (
     <View style={styles.container}>
