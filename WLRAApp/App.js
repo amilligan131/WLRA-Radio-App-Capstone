@@ -15,7 +15,7 @@ export default function PlayerUI() {
     <View style={styles.container}>
       <StatusBar style="auto" />
       
-      {/* Play/Pause Button, Progress Bar, and Volume Icon in Row */}
+      {/* Play/Pause Button, Progress Bar, and Volume Icon in Row all in here*/}
       <View style={styles.controlRow}>
         {/* Play/Pause Button */}
         <TouchableOpacity 
