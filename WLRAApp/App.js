@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 
+
 export default function PlayerUI() {
   const [isPlaying, setIsPlaying] = useState(false); // Play/Pause logic
   const [showVolume, setShowVolume] = useState(false); // Volume slider toggle
