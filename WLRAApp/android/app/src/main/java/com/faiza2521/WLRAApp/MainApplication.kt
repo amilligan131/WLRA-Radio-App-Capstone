@@ -1,4 +1,4 @@
-package com.wlraapp
+package com.faiza2521.WLRAApp
 
 import android.app.Application
 import android.content.res.Configuration

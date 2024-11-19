@@ -3,10 +3,17 @@
     "name": "WLRAApp",
     "slug": "WLRAApp",
     "version": "1.0.0",
+    "sdkVersion": "49.0.0",  
     "extra": {
       "eas": {
         "projectId": "885988f3-b21a-4dd7-aa8c-210b9473f385"
       }
+    },
+    "android": {
+      "package": "com.WLRAApp"
+    },
+    "ios": {
+      "bundleIdentifier": "com.WLRAApp"
     }
   }
 }
