@@ -1,3 +1,7 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",  // Use "react-jsx" if using React 17+ or "react" for earlier versions
+    "allowJs": true      // Allows JavaScript files in the TypeScript project
+  }
 }
