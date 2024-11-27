@@ -116,6 +116,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: 'black', // Black fill for the text
+    textShadowColor: 'red', // Red outline color
+    textShadowOffset: { width: 1, height: 1 }, // Adjust the shadow's offset to simulate an outline
+    textShadowRadius: 1,
   },
   webview: {
     width: 400,
@@ -203,23 +207,48 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+
+  connectContainer: {
+    marginTop: 100, // Adjust to move the section down
+    marginBottom: 5, // Adds space after this section
+    alignItems: 'center', // Centers everything in the connect section
+  },
+
    grid: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     width: '100%',
+    marginTop: 20,
   },
+
+  wlraImage: {
+    width: '100%', // Adjust width as needed
+    height: 100, // Adjust height as needed
+    resizeMode: 'contain', // Ensures image scales properly
+    marginBottom: 20, // Adds space between the image and text
+    marginTop: 10,
+  },
+
   logoContainer: {
+    margin: 0,
+    left: 55,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 3,
   },
+
   logo: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    marginBottom: 100,
+
   },
+
   hostContainer: {
     fontWeight: 'bold',
-	marginBottom: 20,
+	  marginBottom: 20,
     padding: 15,
     backgroundColor: '#ffffff',
     borderRadius: 10,
@@ -399,6 +428,7 @@ function StationBlog({ route, navigation }: ScreenProps) {
 // Links for About Us page
 function AboutUs({ route, navigation }: ScreenProps) {
   const socialMediaLinks = [
+    
     {
       name: 'Instagram',
       logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1024px-Instagram_icon.png',
@@ -406,14 +436,10 @@ function AboutUs({ route, navigation }: ScreenProps) {
     },
     {
       name: 'Facebook',
-      logo: 'https://www.citypng.com/public/uploads/preview/hd-blue-and-white-square-facebook-fb-logo-70175169479235560lh86s7jg.png',
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/c/cd/Facebook_logo_%28square%29.png',
       url: 'https://www.facebook.com/wlraradiostation/',
     },
-    {
-      name: 'Twitter',
-      logo: 'https://banner2.cleanpng.com/20240119/kxy/transparent-abstract-design-black-square-with-white-letter-x-on-1710915506770.webp',
-      url: 'https://twitter.com/wlraradio',
-    },
+
     {
       name: 'Placeholder',
       logo: '', // Empty placeholder for more social media
@@ -432,13 +458,21 @@ function AboutUs({ route, navigation }: ScreenProps) {
   return (
     <View style={styles.eventContainer}>
       <Text style={styles.title}>About Us</Text>
-	  <Text style={styles.AboutUsText}>
+
+      <Image
+        source={require('./assets/wlraLogo.png')} 
+        style={styles.wlraImage}
+      />
+
+	    <Text style={[styles.AboutUsText, { textAlign: 'center' }]}>
 		  WLRA was founded with the objective of providing Lewis students with a practical 
 		  means of practicing their broadcasting skills. Today, the team leverages this experience 
 		  and seeks to share their skills with the Lewis community. 
-	  </Text>
-	  <Text style={styles.title}>Connect with us</Text>
-      <View style={styles.grid}>
+	    </Text>
+
+    <View style={styles.connectContainer}> 
+    <Text style={[styles.title, { textAlign: 'center', fontSize: 20 }]}>Connect with us</Text>
+    <View style={styles.grid}>
         {socialMediaLinks.map((social, index) => (
           <TouchableOpacity
             key={index}
@@ -449,6 +483,7 @@ function AboutUs({ route, navigation }: ScreenProps) {
               <Image source={{ uri: social.logo }} style={styles.logo} />
           </TouchableOpacity>
         ))}
+        </View>
       </View>
     </View>
   );
