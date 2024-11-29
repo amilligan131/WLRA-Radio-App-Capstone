@@ -6,6 +6,8 @@ import {WebView} from 'react-native-webview';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import TrackPlayer, { State } from 'react-native-track-player';
 import axios from 'axios';
+import { BlurView } from '@react-native-community/blur'; // optional for more control
+
 
 
 // Define types for screens
@@ -56,9 +58,10 @@ interface CalendarEvent {
 
 
 
-
-function RadioScreen() {
+const RadioScreen = () => {
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // Import your background image
   const lewisImage = require("./assets/backgroundRadio.png");
 
   // useEffect inside the component
@@ -78,6 +81,7 @@ function RadioScreen() {
     };
   }, []);
 
+  // Toggle between play and pause
   const togglePlayback = async () => {
     const state = await TrackPlayer.getState();
     if (state === State.Playing) {
@@ -90,22 +94,30 @@ function RadioScreen() {
   };
 
   return (
-    <ImageBackground source={lewisImage} style={styles.container}>
+    <ImageBackground source={lewisImage} style={styles.container}
+    blurRadius={5}>
       <StatusBar barStyle="dark-content" />
-      <Text style={styles.title}>Play and Pause the Radio</Text>
-      <TouchableOpacity style={styles.roundButton} onPress={togglePlayback}>
-        <Image
-          source={
-            isPlaying
-              ? require('./assets/WLRAPauseButton.png')
-              : require('./assets/WLRAPlayButton.png')
-          }
-          style={styles.icon}
-        />
-      </TouchableOpacity>
+      
+      {/* Added view with overlay */}
+      <View style={styles.overlay}>
+        <Text style={styles.title}>Play/Pause Radio</Text>
+        <TouchableOpacity style={styles.roundButton} onPress={togglePlayback}>
+          <Image
+            source={
+              isPlaying
+                ? require('./assets/WLRAPauseButton.png')
+                : require('./assets/WLRAPlayButton.png')
+            }
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* This is an overlay behind the content to add blur */}
+      <View style={styles.blurOverlay}></View>
     </ImageBackground>
   );
-}
+};
 
 
 
@@ -116,14 +128,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 	backgroundColor: '#F5F5F5',
   },
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay to improve text readability
+  },
+  blurOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0.7, // Adjust opacity to achieve desired blur effect
+    zIndex: -1, // Ensure the blur stays behind other components
+  },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 28, // Increased font size for better visibility
+    fontWeight: '600', // Slightly less bold to avoid harshness
     marginBottom: 20,
-    color: 'black', // Black fill for the text
-    textShadowColor: 'red', // Red outline color
-    textShadowOffset: { width: 1, height: 1 }, // Adjust the shadow's offset to simulate an outline
-    textShadowRadius: 1,
+    color: 'white', // Use white text for higher contrast against the red background
+    textShadowColor: 'rgba(0, 0, 0, 0.7)', // Darker shadow for better readability
+    textShadowOffset: { width: 1, height: 1 }, // Keeps the shadow offset for depth
+    textShadowRadius: 3, // Increased radius for a softer shadow effect
+    letterSpacing: 1.5, // Slightly increased letter spacing for readability
+    textAlign: 'center', // Ensure the text is centered
   },
   webview: {
     width: 400,
@@ -140,7 +174,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 100, // Makes it a circle
-    backgroundColor: '#800000', // Button color
+    backgroundColor: 'rgba(128, 0, 0, 0.7)', // Button color with transparency (0.7 is 70% opacity)
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -499,7 +533,22 @@ const Drawer = createDrawerNavigator();
 // Drawer component with typed screens
 function MyDrawer() {
   return (
-    <Drawer.Navigator initialRouteName="RadioScreen">
+    <Drawer.Navigator
+      initialRouteName="RadioScreen"
+      screenOptions={{
+        drawerStyle: {
+          backgroundColor: '#2E2E2E', // Dark grey background color
+        },
+        drawerLabelStyle: {
+          color: 'white', // Lighter maroon/red text color for better readability
+          fontWeight: 'bold', // Optional: Makes the text stand out more
+        },
+        headerStyle: {
+          backgroundColor: '#2E2E2E', // Dark grey header background (optional)
+        },
+        headerTintColor: 'white', // White header text for contrast (optional)
+      }}
+    >
       <Drawer.Screen
         name="Radio Screen"
         component={RadioScreen}
@@ -515,12 +564,12 @@ function MyDrawer() {
         component={HostBiographies}
         options={{ drawerLabel: 'Host Biographies' }}
       />
-	  <Drawer.Screen
+      <Drawer.Screen
         name="Station Blog"
         component={StationBlog}
         options={{ drawerLabel: 'Station Blog' }}
       />
-	   <Drawer.Screen
+      <Drawer.Screen
         name="About Us"
         component={AboutUs}
         options={{ drawerLabel: 'About Us' }}
