@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Linking, ImageBackground, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import {WebView} from 'react-native-webview';
@@ -56,9 +56,12 @@ interface CalendarEvent {
 
 
 
+
 function RadioScreen() {
   const [isPlaying, setIsPlaying] = useState(false);
+  const lewisImage = require("./assets/backgroundRadio.png");
 
+  // useEffect inside the component
   useEffect(() => {
     // Initialize TrackPlayer
     TrackPlayer.setupPlayer().then(() => {
@@ -87,7 +90,8 @@ function RadioScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ImageBackground source={lewisImage} style={styles.container}>
+      <StatusBar barStyle="dark-content" />
       <Text style={styles.title}>Play and Pause the Radio</Text>
       <TouchableOpacity style={styles.roundButton} onPress={togglePlayback}>
         <Image
@@ -96,10 +100,10 @@ function RadioScreen() {
               ? require('./assets/WLRAPauseButton.png')
               : require('./assets/WLRAPlayButton.png')
           }
-          style={styles.icon} // Apply styles to adjust image size
+          style={styles.icon}
         />
       </TouchableOpacity>
-    </View>
+    </ImageBackground>
   );
 }
 
