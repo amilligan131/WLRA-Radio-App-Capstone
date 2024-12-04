@@ -24,6 +24,8 @@ interface HostAttributes {
 }
 
 interface HostBio {
+  Name: string;
+  Biography: string;
   id: number;
   attributes: HostAttributes;
 }
@@ -32,6 +34,9 @@ interface BlogAttributes {
   Title: string;
   Content: string;
   PublishedDate: string;
+  articleTitle: string;
+  articlePublishedDate: string;
+  articleDescription: string;
 }
 
 interface BlogPost {
@@ -52,6 +57,10 @@ interface EventAttributes {
 }
 
 interface CalendarEvent {
+  calendarEventTitle: string;
+  calendarEventStarts: any;
+  calendarEventEnds: any;
+  calendarEventDescription: string;
   id: number;
   attributes: EventAttributes;
 }
@@ -305,10 +314,13 @@ function Calendar({ route, navigation }: ScreenProps) {
 
   useEffect(() => {
     axios
-      .get('http://192.168.56.1:1337/api/calendar-events') // Replace with your actual Strapi endpoint
+      .get('http://192.168.56.1:1337/api/calendar-events', {// Replace with your actual Strapi endpoint
+        timeout: 10000, // Set timeout to 10 seconds
+      })
       .then((response) => {
         const fetchedData = response.data.data;
         setCalendarEvents(fetchedData);
+        
       })
       .catch((error) => {
         console.error('Error fetching calendar events:', error);
@@ -333,7 +345,7 @@ function Calendar({ route, navigation }: ScreenProps) {
 		  const { attributes } = event;
 
 		  // Format the date-time strings
-		  const formatDateTime = (dateTime) => {
+		  const formatDateTime = (dateTime: string | number | Date) => {
 			const date = new Date(dateTime);
 			return `${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`;
 		  };
@@ -449,12 +461,12 @@ function StationBlog({ route, navigation }: ScreenProps) {
         const { attributes } = post;
         return (
           <View key={post.id} style={styles.blogContainer}>
-            <Text style={styles.title}>{post.articleTitle || 'No Title'}</Text>
+            <Text style={styles.title}>{attributes.articleTitle || 'No Title'}</Text>
             <Text style={styles.blogDate}>
-              {post.articlePublishedDate || 'No Date'}
+              {attributes.articlePublishedDate || 'No Date'}
             </Text>
             <Text style={styles.blogContent}>
-              {post.articleDescription || 'No Content'}
+              {attributes.articleDescription || 'No Content'}
             </Text>
           </View>
         );

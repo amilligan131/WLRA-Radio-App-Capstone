@@ -17,7 +17,7 @@
     "@offset-dev/strapi-calendar": "^1.0.0",
     "@strapi/plugin-cloud": "5.4.0",
     "@strapi/plugin-users-permissions": "5.4.0",
-    "@strapi/strapi": "5.4.0",
+    "@strapi/strapi": "^5.5.0",
     "better-sqlite3": "11.3.0",
     "cross-env": "^7.0.3",
     "fs-extra": "^10.0.0",
