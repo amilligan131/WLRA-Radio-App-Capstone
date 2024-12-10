@@ -20,7 +20,6 @@ interface ScreenProps {
 interface HostAttributes {
   Name: string;
   Biography: string;
-  // Add more fields here (e.g., imageUrl)
 }
 
 interface HostBio {
@@ -90,20 +89,34 @@ const RadioScreen = () => {
     };
   }, []);
 
-  // Toggle between play and pause
-  const togglePlayback = async () => {
+    const togglePlayback = async () => {
     const state = await TrackPlayer.getState();
+
     if (state === State.Playing) {
-      TrackPlayer.pause();
+      // Pause playback and reset the cache
+      await TrackPlayer.pause();
+      await TrackPlayer.reset(); // Clear TrackPlayer cache
       setIsPlaying(false);
     } else {
-      TrackPlayer.play();
+      // Re-add the track if necessary and play
+      const currentQueue = await TrackPlayer.getQueue();
+      if (currentQueue.length === 0) {
+        // Re-add the track if the queue is empty
+        await TrackPlayer.add({
+          id: '1',
+          url: 'http://199.245.229.210:8000/128',
+          title: 'Live Stream',
+          artist: 'WLRA Radio',
+          type: 'stream',
+        });
+      }
+      await TrackPlayer.play();
       setIsPlaying(true);
     }
   };
 
   return (
-    <ImageBackground source={lewisImage} style={styles.container}
+    <ImageBackground source={lewisImage} style={styles.radioContainer}
     blurRadius={5}>
       <StatusBar barStyle="dark-content" />
       
@@ -133,17 +146,25 @@ const RadioScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 16,
 	backgroundColor: '#F5F5F5',
   },
-  overlay: {
+  radioContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay to improve text readability
+    backgroundColor: '#F5F5F5',
+    padding: 16, //
+  },
+  overlay: {
+    position: 'absolute', // Ensures the overlay is positioned relative to the parent
+	top: 0,
+	left: 0,
+	right: 0,
+	bottom: 0,
+	backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
+	justifyContent: 'center',
+	alignItems: 'center',
   },
   blurOverlay: {
     position: 'absolute',
@@ -200,7 +221,7 @@ const styles = StyleSheet.create({
    blogContainer: {
     marginBottom: 20,
     padding: 15,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#eaeaea',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -226,7 +247,7 @@ const styles = StyleSheet.create({
   eventContainer: {
     marginBottom: 20,
     padding: 15,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#eaeaea',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -297,7 +318,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
 	  marginBottom: 20,
     padding: 15,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#eaeaea',
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -314,7 +335,7 @@ function Calendar({ route, navigation }: ScreenProps) {
 
   useEffect(() => {
     axios
-      .get('http://192.168.56.1:1337/api/calendar-events', {// Replace with your actual Strapi endpoint
+      .get('https://healing-blessing-a3046c3f72.strapiapp.com/api/calendar-events', {// Replace with your actual Strapi endpoint
         timeout: 10000, // Set timeout to 10 seconds
       })
       .then((response) => {
@@ -339,38 +360,38 @@ function Calendar({ route, navigation }: ScreenProps) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Calendar Events</Text>
-      {calendarEvents.map((event) => {
-		  const { attributes } = event;
+	  <View style={[styles.container, { backgroundColor: '#2E2E2E' }]}>
+		<Text style={styles.title}>Calendar Events</Text>
+		<ScrollView 
+			contentContainerStyle={{ paddingBottom: 20 }}
+			style={styles.scrollView}
+			indicatorStyle="black">
+		  {calendarEvents.map((event) => {
+			const { attributes } = event;
 
-		  // Format the date-time strings
-		  const formatDateTime = (dateTime: string | number | Date) => {
-			const date = new Date(dateTime);
-			return `${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`;
-		  };
+			const formatDateTime = (dateTime) => {
+			  const date = new Date(dateTime);
+			  return `${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`;
+			};
 
-		  return (
-			<View key={event.id} style={styles.eventContainer}>
-			  <Text style={styles.eventTitle}>{event.calendarEventTitle || 'No Title'}</Text>
-			  <Text style={styles.eventDate}>
-				{event.calendarEventStarts
-				  ? `Starting at: ${formatDateTime(event.calendarEventStarts)}`
-				  : 'No start time.'}
-			  </Text>
-			  <Text style={styles.eventDate}>
-				{event.calendarEventEnds
-				  ? `Ending at: ${formatDateTime(event.calendarEventEnds)}`
-				  : 'No end time.'}
-			  </Text>
-			  <Text style={styles.eventDescription}>
-				{event.calendarEventDescription || 'No Description.'}
-			  </Text>
-			</View>
-		  );
-		})}
-    </ScrollView>
-  );
+			return (
+			  <View key={event.id} style={styles.eventContainer}>
+				<Text style={styles.eventTitle}>{event.calendarEventTitle || 'No Title'}</Text>
+				<Text style={styles.eventDate}>
+				  {event.calendarEventStarts ? `Starting at: ${formatDateTime(event.calendarEventStarts)}` : 'No start time.'}
+				</Text>
+				<Text style={styles.eventDate}>
+				  {event.calendarEventEnds ? `Ending at: ${formatDateTime(event.calendarEventEnds)}` : 'No end time.'}
+				</Text>
+				<Text style={styles.eventDescription}>
+				  {event.calendarEventDescription || 'No Description.'}
+				</Text>
+			  </View>
+			);
+		  })}
+		</ScrollView>
+	  </View>
+	);
 }
 
 // HostBiographies component with proper typing
@@ -381,7 +402,7 @@ function HostBiographies({ route, navigation }: ScreenProps) {
   useEffect(() => {
     // Fetch data from Strapi API
     axios
-       .get('http://192.168.56.1:1337/api/host-biographies')
+       .get('https://healing-blessing-a3046c3f72.strapiapp.com/api/host-biographies')
       .then((response) => {
         const fetchedData = response.data.data;
         setHostBiographies(fetchedData);
@@ -403,37 +424,40 @@ function HostBiographies({ route, navigation }: ScreenProps) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Host Biographies</Text>
-      {hostBiographies.map((host) => {
-        const { attributes } = host; // Destructure attributes from the host object
-        return (
-          <View key={host.id} style={styles.hostContainer}>
-            <Text style={styles.eventTitle}>
-              {host.Name || 'Name not available'}
-			</Text>
-			<Text style={styles.eventContainer}>
-              {host.Biography || 'Biography not available'}
-            </Text>
-          {/* Uncomment below if you have host images */}
-          {/* <Image 
-            style={styles.hostImage}
-            source={{ uri: host.attributes.imageUrl }}
-          /> */}
-        </View>
-        );
-      })}
-    </View>
-  );
+	  <View style={[styles.container, { backgroundColor: '#2E2E2E' }]}>
+		<Text style={styles.title}>Host Biographies</Text>
+		<ScrollView contentContainerStyle={styles.scrollContent}>
+		  {hostBiographies.map((host) => {
+			const { attributes } = host; // Destructure attributes from the host object
+			return (
+			  <View key={host.id} style={styles.hostContainer}>
+				<Text style={styles.eventTitle}>
+				  {host.Name || 'Name not available'}
+				</Text>
+				<Text style={styles.eventDescription}>
+				  {host.Biography || 'Biography not available'}
+				</Text>
+				{/* Uncomment below for host images */}
+				{/* <Image 
+				  style={styles.hostImage}
+				  source={{ uri: host.attributes.imageUrl }}
+				/> */}
+			  </View>
+			);
+		  })}
+		</ScrollView>
+	  </View>
+	);
 }
 
 function StationBlog({ route, navigation }: ScreenProps) {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [expandedPost, setExpandedPost] = useState<number | null>(null); // Track expanded post
 
   useEffect(() => {
     axios
-      .get('http://192.168.56.1:1337/api/articles')
+      .get('https://healing-blessing-a3046c3f72.strapiapp.com/api/articles')
       .then((response) => {
         const fetchedData = response.data.data;
         setBlogPosts(fetchedData);
@@ -455,24 +479,50 @@ function StationBlog({ route, navigation }: ScreenProps) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Station Blog</Text>
-      {blogPosts.map((post) => {
-        const { attributes } = post;
-        return (
-          <View key={post.id} style={styles.blogContainer}>
-            <Text style={styles.title}>{attributes.articleTitle || 'No Title'}</Text>
-            <Text style={styles.blogDate}>
-              {attributes.articlePublishedDate || 'No Date'}
-            </Text>
-            <Text style={styles.blogContent}>
-              {attributes.articleDescription || 'No Content'}
-            </Text>
-          </View>
-        );
-      })}
-    </ScrollView>
-  );
+	  <View style={[styles.container, { backgroundColor: '#2E2E2E' }]}>
+		<Text style={styles.title}>Station Blog</Text>
+		<ScrollView contentContainerStyle={styles.scrollContent}>
+		  {blogPosts.map((post) => {
+			const isExpanded = expandedPost === post.id; // Check if the post is expanded
+
+			return (
+			  <View key={post.id} style={styles.blogContainer}>
+				<Text style={styles.blogTitle}>
+				  {post.articleTitle || 'No Title'}
+				</Text>
+				<Text style={styles.blogDate}>
+				  {new Date(post.articlePublishedDate).toLocaleDateString('en-US', {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric',
+				  }) || 'No Date'}
+				</Text>
+				<Text style={styles.blogContent}>
+				  {post.articleDescription || 'No Content'}
+				</Text>
+
+				{/* Conditionally render full article content */}
+				{isExpanded && (
+				  <Text style={styles.fullArticle}>
+					{post.articleBody || 'No Full Article Content'}
+				  </Text>
+				)}
+
+				{/* Add button to expand/collapse the article */}
+				<TouchableOpacity
+				  onPress={() => setExpandedPost(isExpanded ? null : post.id)} // Toggle between expand/collapse
+				  style={styles.dropdownButton}
+				>
+				  <Text style={styles.dropdownText}>
+					{isExpanded ? 'Read Less' : 'Read More'}
+				  </Text>
+				</TouchableOpacity>
+			  </View>
+			);
+		  })}
+		</ScrollView>
+	  </View>
+	);
 }
 
 // Links for About Us page
@@ -506,7 +556,7 @@ function AboutUs({ route, navigation }: ScreenProps) {
   };
 
   return (
-    <View style={styles.eventContainer}>
+    <View style={[styles.container, { backgroundColor: '#2E2E2E' }]}>
       <Text style={styles.title}>About Us</Text>
 
       <Image
@@ -514,7 +564,7 @@ function AboutUs({ route, navigation }: ScreenProps) {
         style={styles.wlraImage}
       />
 
-	    <Text style={[styles.AboutUsText, { textAlign: 'center' }]}>
+	    <Text style={[styles.AboutUsText, { textAlign: 'center', color: '#FFFFFF' }]}>
 		  WLRA was founded with the objective of providing Lewis students with a practical 
 		  means of practicing their broadcasting skills. Today, the team leverages this experience 
 		  and seeks to share their skills with the Lewis community. 
@@ -552,13 +602,13 @@ function MyDrawer() {
           backgroundColor: '#2E2E2E', // Dark grey background color
         },
         drawerLabelStyle: {
-          color: 'white', // Lighter maroon/red text color for better readability
-          fontWeight: 'bold', // Optional: Makes the text stand out more
+          color: 'white', // Lighter text color for better readability
+          fontWeight: 'bold',
         },
         headerStyle: {
-          backgroundColor: '#2E2E2E', // Dark grey header background (optional)
+          backgroundColor: '#2E2E2E', // Dark grey header background
         },
-        headerTintColor: 'white', // White header text for contrast (optional)
+        headerTintColor: 'white', // White header text for contrast
       }}
     >
       <Drawer.Screen
